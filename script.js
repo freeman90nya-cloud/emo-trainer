@@ -1,9 +1,18 @@
+/**
+ * Тренажер платформы «ЭМО»
+ * Основной скрипт управления логикой прохождения, проверки ответов и отрисовки результатов.
+ */
+
+// Глобальные переменные состояния тренажера
 let questions = [];
 let currentIndex = 0;
 let maxUnlockedIndex = 0;
 let userAnswers = [];
 
-// Единая функция-генератор для иконки галочки (устраняет дублирование кода)
+/**
+ * Генератор SVG-иконки галочки.
+ * Позволяет избежать дублирования кода, гибко управляя цветом и наличием ID для анимации цвета.
+ */
 const getCheckIcon = (strokeColor, withId = false) => `
     <svg width="48" height="48" viewBox="0 0 28 28" fill="none" style="display: inline-block; vertical-align: middle; overflow: visible;">
         <polyline points="4,13 11,21 24,7" stroke="#000000" stroke-width="7" stroke-linecap="square" stroke-linejoin="miter" stroke-miterlimit="3"></polyline>
@@ -11,7 +20,7 @@ const getCheckIcon = (strokeColor, withId = false) => `
     </svg>
 `;
 
-// Единая константа для иконки крестика
+// Константа для иконки крестика (ошибки / сброса)
 const CROSS_ICON = `
     <svg width="48" height="48" viewBox="0 0 24 24" fill="none" style="display: inline-block; vertical-align: middle;">
         <line x1="18" y1="6" x2="6" y2="18" stroke="#000000" stroke-width="5.5" stroke-linecap="square"></line>
@@ -21,40 +30,51 @@ const CROSS_ICON = `
     </svg>
 `;
 
+// Кэширование DOM-элементов интерфейса
 const trainerScreen = document.getElementById("trainer-screen");
 const resultsScreen = document.getElementById("results-screen");
 const questionImg = document.getElementById("question-img");
 const targetWordSpan = document.getElementById("target-word");
 const userInput = document.getElementById("user-input");
 const submitBtn = document.getElementById("submit-btn");
-let submitIconPath;
+let submitIconPath; // Ссылка на внутренний контур кнопки отправки (инициализируется после рендеринга)
 const resetBtn = document.getElementById("reset-btn");
 const stepsIndicator = document.getElementById("steps-indicator");
 const resultsTbody = document.getElementById("results-tbody");
 const resetResultsBtn = document.getElementById("reset-results-btn");
 
+/**
+ * Инициализация тренажера: загрузка вопросов из JSON, сброс состояния и запуск первого вопроса.
+ */
 async function initTrainer() {
     try {
-        // Динамически внедряем иконки в элементы интерфейса
+        // Динамическая вставка SVG-иконок в элементы интерфейса
         submitBtn.innerHTML = getCheckIcon("#cccccc", true);
         submitIconPath = document.getElementById("submit-icon-path");
         resetBtn.innerHTML = CROSS_ICON;
         resetResultsBtn.innerHTML = CROSS_ICON;
 
+        // Загрузка массива вопросов
         const response = await fetch('questions.json');
         questions = await response.json();
+        
         shuffleArray(questions);
         currentIndex = 0;
         maxUnlockedIndex = 0;
         userAnswers = [];
+        
         trainerScreen.style.display = "flex";
         resultsScreen.style.display = "none";
+        
         loadQuestion();
     } catch (error) {
         console.error("Ошибка загрузки вопросов:", error);
     }
 }
 
+/**
+ * Перемешивание массива в случайном порядке (алгоритм Фишера — Йетса).
+ */
 function shuffleArray(array) {
     for (let i = array.length - 1; i > 0; i--) {
         const j = Math.floor(Math.random() * (i + 1));
@@ -62,24 +82,31 @@ function shuffleArray(array) {
     }
 }
 
-// Функция управления цветом кнопки отправки в зависимости от введенного текста
+/**
+ * Динамическое изменение цвета иконки отправки в зависимости от наличия текста в поле ввода.
+ */
 function updateSubmitButtonState() {
     if (submitIconPath) {
         if (userInput.value.trim().length > 0) {
-            submitIconPath.setAttribute("stroke", "#2b8a3e"); // Зеленый цвет при вводе
+            submitIconPath.setAttribute("stroke", "#2b8a3e"); // Зеленый (есть текст)
         } else {
-            submitIconPath.setAttribute("stroke", "#cccccc"); // Серый цвет, если поле пустое
+            submitIconPath.setAttribute("stroke", "#cccccc"); // Серый (поле пустое)
         }
     }
 }
 
+/**
+ * Загрузка и отображение текущего вопроса на экране.
+ */
 function loadQuestion() {
     const currentQ = questions[currentIndex];
     questionImg.src = currentQ.image;
     
+    // Форматирование целевого слова (первая буква заглавная, остальные строчные)
     const word = currentQ.correctAnswer;
     targetWordSpan.textContent = word.charAt(0) + word.slice(1).toLowerCase();
     
+    // Восстановление ранее введенного ответа пользователя (если он возвращался к шагу)
     if (userAnswers[currentIndex]) {
         userInput.value = userAnswers[currentIndex].userText;
     } else {
@@ -91,6 +118,9 @@ function loadQuestion() {
     renderSteps();
 }
 
+/**
+ * Отрисовка боковой панели навигации по шагам (с учетом статусов посещения).
+ */
 function renderSteps() {
     stepsIndicator.innerHTML = "";
     questions.forEach((_, index) => {
@@ -106,6 +136,7 @@ function renderSteps() {
         step.textContent = index + 1;
         step.id = `step-${index}`;
         
+        // Разрешаем клик только по уже открытым/пройденным шагам
         if (index <= maxUnlockedIndex) {
             step.style.cursor = "pointer";
             step.addEventListener("click", () => {
@@ -120,18 +151,24 @@ function renderSteps() {
     });
 }
 
+// Ограничение ввода: разрешена только кириллица, пробелы и дефисы
 userInput.addEventListener('input', (e) => {
     e.target.value = e.target.value.replace(/[^а-яА-ЯёЁ\s-]/g, '');
     updateSubmitButtonState();
 });
 
+/**
+ * Обработка отправки ответа пользователем, валидация и переход к следующему вопросу.
+ */
 function handleSubmission() {
     const userText = userInput.value.trim();
-    if (!userText) return;
+    if (!userText) return; // Пустой ответ не отправляется
 
     const currentQ = questions[currentIndex];
+    // Регистронезависимая проверка ответа
     const isCorrect = userText.toUpperCase() === currentQ.correctAnswer.toUpperCase();
 
+    // Сохранение результата ответа текущего шага
     userAnswers[currentIndex] = {
         image: currentQ.image,
         correctAnswer: currentQ.correctAnswer,
@@ -139,12 +176,14 @@ function handleSubmission() {
         isCorrect: isCorrect
     };
 
+    // Открытие следующего доступного шага по мере прохождения
     if (currentIndex === maxUnlockedIndex && maxUnlockedIndex < questions.length - 1) {
         maxUnlockedIndex++;
     }
 
     currentIndex++;
 
+    // Проверка завершения всех вопросов или поиск пропущенных шагов
     if (currentIndex < questions.length) {
         loadQuestion();
     } else {
@@ -162,11 +201,15 @@ function handleSubmission() {
     }
 }
 
+// Слушатели событий отправки формы (кнопка и клавиша Enter)
 submitBtn.addEventListener("click", handleSubmission);
 userInput.addEventListener('keypress', (e) => {
     if (e.key === 'Enter') handleSubmission();
 });
 
+/**
+ * Вспомогательная функция для подсветки гласных букв красным цветом.
+ */
 function formatVowels(text) {
     const vowels = "аеёиоуыэюяАЕЁИОУЫЭЮЯ";
     return text.split('').map(char => {
@@ -177,10 +220,14 @@ function formatVowels(text) {
     }).join('');
 }
 
+/**
+ * Переключение на экран и отрисовка итоговой таблицы результатов.
+ */
 function showResults() {
     trainerScreen.style.display = "none";
     resultsScreen.style.display = "flex";
 
+    // Форматирование заголовков таблицы
     document.querySelectorAll('#results-table th').forEach(th => {
         if (th.textContent.trim() !== '#') {
             th.innerHTML = formatVowels(th.textContent);
@@ -188,13 +235,14 @@ function showResults() {
     });
 
     resultsTbody.innerHTML = "";
+    
+    // Заполнение таблицы строк результатов ответов пользователя
     userAnswers.forEach((item, index) => {
         const tr = document.createElement("tr");
         
         const formattedCorrect = formatVowels(item.correctAnswer.toUpperCase());
         const formattedUser = formatVowels(item.userText.toUpperCase());
 
-        // Используем функции/константы без дублирования кода
         const statusIcon = item.isCorrect ? getCheckIcon("#2b8a3e", false) : CROSS_ICON;
 
         tr.innerHTML = `
@@ -210,7 +258,9 @@ function showResults() {
     });
 }
 
+// Привязка обработчиков к кнопкам перезапуска/сброса тренажера
 resetBtn.addEventListener("click", initTrainer);
 resetResultsBtn.addEventListener("click", initTrainer);
 
+// Первичный запуск приложения
 initTrainer();
