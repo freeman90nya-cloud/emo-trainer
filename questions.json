@@ -1,0 +1,7 @@
+[
+    { "id": 1, "image": "assets/salad.png", "correctAnswer": "ЗЕЛЕНЬ" },
+    { "id": 2, "image": "assets/ashan.png", "correctAnswer": "АШАН" },
+    { "id": 3, "image": "assets/tyumen.png", "correctAnswer": "ТЮМЕНЬ" },
+    { "id": 4, "image": "assets/roller.png", "correctAnswer": "КАТОК" },
+    { "id": 5, "image": "assets/rink.png", "correctAnswer": "КАТОК" }
+]

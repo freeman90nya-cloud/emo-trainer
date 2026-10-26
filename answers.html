@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Таблица ответов — Тренажер ЭМО</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <main class="trainer-container results-container">
+        
+        <!-- Кнопка сброса / перезапуска с черным контуром крестика -->
+        <button id="reset-results-btn" class="reset-btn" title="Перезапустить">
+            <svg width="48" height="48" viewBox="0 0 24 24" fill="none">
+                <line x1="18" y1="6" x2="6" y2="18" stroke="#000000" stroke-width="6.5" stroke-linecap="square"></line>
+                <line x1="6" y1="6" x2="18" y2="18" stroke="#000000" stroke-width="6.5" stroke-linecap="square"></line>
+                <line x1="18" y1="6" x2="6" y2="18" stroke="#e53935" stroke-width="4" stroke-linecap="square"></line>
+                <line x1="6" y1="6" x2="18" y2="18" stroke="#e53935" stroke-width="4" stroke-linecap="square"></line>
+            </svg>
+        </button>
+
+        <div class="results-card">
+            <div class="table-scroll">
+                <table id="results-table">
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Картинка</th>
+                            <th>Правильный ответ</th>
+                            <th>Твой ответ</th>
+                            <th>Результат</th>
+                        </tr>
+                    </thead>
+                    <tbody id="results-tbody">
+                        <!-- Сюда данные подтянутся автоматически из памяти -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+    </main>
+
+    <script>
+        function formatVowels(text) {
+            const vowels = "аеёиоуыэюяАЕЁИОУЫЭЮЯ";
+            return text.split('').map(char => {
+                if (vowels.includes(char)) {
+                    return `<span style="color: #e53935;">${char}</span>`;
+                }
+                return char;
+            }).join('');
+        }
+
+        // Форматируем шапку таблицы (делаем гласные красными)
+        document.querySelectorAll('#results-table th').forEach(th => {
+            if (th.textContent.trim() !== '#') {
+                th.innerHTML = formatVowels(th.textContent);
+            }
+        });
+
+        // Загружаем сохраненные результаты из localStorage
+        const results = JSON.parse(localStorage.getItem("trainerResults")) || [];
+        const tbody = document.getElementById("results-tbody");
+        const resetBtn = document.getElementById("reset-results-btn");
+
+        // Отрисовываем строки таблицы
+        results.forEach((item, index) => {
+            const tr = document.createElement("tr");
+            const formattedCorrect = formatVowels(item.correctAnswer.toUpperCase());
+            const formattedUser = formatVowels(item.userText.toUpperCase());
+            
+            const statusIcon = item.isCorrect 
+                ? `<svg width="40" height="40" viewBox="0 0 24 24" fill="none"><polyline points="2 12 8 18 22 4" stroke="#000000" stroke-width="6.5" stroke-linecap="square" stroke-linejoin="miter"></polyline><polyline points="2 12 8 18 22 4" stroke="#2b8a3e" stroke-width="4" stroke-linecap="square" stroke-linejoin="miter"></polyline></svg>`
+                : `<svg width="40" height="40" viewBox="0 0 24 24" fill="none"><line x1="18" y1="6" x2="6" y2="18" stroke="#000000" stroke-width="6.5" stroke-linecap="square"></line><line x1="6" y1="6" x2="18" y2="18" stroke="#000000" stroke-width="6.5" stroke-linecap="square"></line><line x1="18" y1="6" x2="6" y2="18" stroke="#e53935" stroke-width="4" stroke-linecap="square"></line><line x1="6" y1="6" x2="18" y2="18" stroke="#e53935" stroke-width="4" stroke-linecap="square"></line></svg>`;
+
+            tr.innerHTML = `
+                <td>${index + 1}</td>
+                <td><img src="${item.image}" alt="картинка" class="table-img"></td>
+                <td>${formattedCorrect}</td>
+                <td>${formattedUser}</td>
+                <td class="${item.isCorrect ? 'status-ok' : 'status-err'}">
+                    ${statusIcon}
+                </td>
+            `;
+            tbody.appendChild(tr);
+        });
+
+        // Кнопка перезапуска (сброс и возврат на первый вопрос)
+        resetBtn.addEventListener("click", () => {
+            localStorage.removeItem("trainerResults");
+            window.location.href = "index.html";
+        });
+    </script>
+</body>
+</html>

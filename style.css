@@ -1,0 +1,289 @@
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    font-family: Arial, Helvetica, sans-serif;
+}
+
+body {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    background-color: #f4f6f9;
+    user-select: none;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+}
+
+#user-input {
+    user-select: text;
+    -webkit-user-select: text;
+    -moz-user-select: text;
+    -ms-user-select: text;
+}
+
+img {
+    user-select: none;
+    -webkit-user-drag: none;
+}
+
+.trainer-container {
+    position: relative;
+    width: 1140px;
+    max-width: none;
+    min-height: 520px;
+    background-color: #4be1fd;
+    border-radius: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 36px 36px 36px 90px;
+    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.12);
+}
+
+/* Боковая панель ровно у левого края синего поля */
+.steps-sidebar {
+    position: absolute;
+    left: 40px;
+    background-color: #ffffff;
+    border: 2px solid #2fa1b3;
+    border-radius: 10px;
+    padding: 8px 6px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    z-index: 10;
+}
+
+/* Кнопки с цифрами */
+.step-badge {
+    width: 44px;
+    height: 44px;
+    background-color: #ffffff;
+    border: 2px solid #b0b0b0;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 900;
+    color: #555;
+    font-size: 19px;
+    cursor: pointer;
+    transition: all 0.15s ease;
+}
+
+/* Пройденный шаг */
+.step-badge.visited {
+    background-color: #e8d7fc;
+    border-color: #b0b0b0;
+    color: #4a3b6c;
+}
+
+/* Текущий (активный) шаг */
+.step-badge.active {
+    background-color: #a87bc8;
+    border-color: #b0b0b0;
+    color: #ffffff;
+}
+
+/* Главный белый прямоугольник */
+.question-card {
+    width: 930px;
+    background-color: #ffffff;
+    border: 2px solid #2fa1b3;
+    border-radius: 16px;
+    padding: 35px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 440px;
+}
+
+.image-box {
+    width: 280px;
+    height: 200px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 20px;
+}
+
+.image-box img {
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain;
+}
+
+.instruction-text {
+    margin-bottom: 15px;
+    font-size: 16px;
+    color: #333;
+    font-weight: 500;
+}
+
+#target-word {
+    font-weight: bold;
+    color: #000000;
+}
+
+.input-area {
+    display: flex;
+    gap: 14px;
+    width: 100%;
+    max-width: 420px;
+    justify-content: center;
+    align-items: center;
+    margin-top: 5px;
+}
+
+#user-input {
+    height: 60px;
+    padding: 0 20px;
+    border: 2px solid #000000;
+    border-radius: 11px;
+    font-size: 20px;
+    outline: none;
+    width: 320px;
+    text-align: center;
+}
+
+#user-input:focus {
+    border-color: #000000;
+}
+
+.submit-btn {
+    background-color: #ffffff;
+    border: 2px solid #000000;
+    width: 60px;
+    height: 60px;
+    border-radius: 11px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    outline: none;
+    padding: 0;
+}
+
+.submit-btn:hover {
+    background-color: #f0f0f0;
+}
+
+/* Кнопка сброса (крестик) */
+.reset-btn {
+    position: absolute;
+    bottom: -18px;
+    right: -18px;
+    background: none;
+    border: none;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+    transition: transform 0.1s ease;
+}
+
+.reset-btn:hover {
+    transform: scale(1.1);
+}
+
+.results-container {
+    height: auto;
+    min-height: 450px;
+}
+
+.results-card {
+    flex-grow: 1;
+    background-color: #ffffff;
+    border-radius: 8px;
+    padding: 25px 20px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    min-height: 350px;
+}
+
+.table-scroll {
+    width: 100%;
+    max-height: 70vh;
+    overflow-y: auto;
+}
+
+#results-table {
+    width: 100%;
+    border-collapse: collapse;
+    text-align: center;
+    text-transform: uppercase;
+}
+
+#results-table th, #results-table td {
+    padding: 12px 10px;
+    border-bottom: 1px solid #e0e0e0;
+    font-size: 15px;
+    vertical-align: middle;
+}
+
+#results-table th {
+    background-color: #f8f9fa;
+    color: #555;
+}
+
+.table-img {
+    width: 45px;
+    height: 45px;
+    object-fit: contain;
+}
+
+.status-ok, .status-err {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+@media screen and (max-width: 600px) {
+    body {
+        padding: 10px;
+        align-items: flex-start;
+    }
+    .trainer-container {
+        flex-direction: column;
+        height: auto;
+        min-height: auto;
+        padding: 15px;
+        gap: 15px;
+        width: 100%;
+        max-width: 100%;
+    }
+    .steps-sidebar {
+        position: static;
+        flex-direction: row;
+        justify-content: center;
+        width: 100%;
+        height: auto;
+        left: auto;
+    }
+    .question-card {
+        width: 100%;
+        height: auto;
+    }
+    .image-box img {
+        max-width: 100%;
+        max-height: 150px;
+    }
+    .input-area {
+        flex-direction: row;
+        width: 100%;
+    }
+    #user-input {
+        width: 100%;
+    }
+    .reset-btn {
+        bottom: 5px;
+        right: 5px;
+    }
+}
