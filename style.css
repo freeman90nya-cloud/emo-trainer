@@ -31,37 +31,41 @@ img {
 
 .trainer-container {
     position: relative;
-    width: 1140px;
+    width: 980px;
     max-width: none;
     min-height: 520px;
     background-color: #4be1fd;
-    border-radius: 20px;
+    border-radius: 0px;
     display: flex;
     align-items: center;
     justify-content: center;
-    padding: 36px 36px 36px 90px;
+    padding: 25px 50px 25px 50px;
     box-shadow: 0 12px 30px rgba(0, 0, 0, 0.12);
+
+    overflow: hidden;
 }
 
 /* Боковая панель ровно у левого края синего поля */
 .steps-sidebar {
     position: absolute;
-    left: 40px;
+    left: -10px;
+    width: 69px;
+    align-items: flex-end;
     background-color: #ffffff;
     border: 2px solid #2fa1b3;
     border-radius: 10px;
-    padding: 8px 6px;
+    padding: 4px 4px;
     display: flex;
     flex-direction: column;
-    gap: 8px;
+    gap: 4px;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
     z-index: 10;
 }
 
 /* Кнопки с цифрами */
 .step-badge {
-    width: 44px;
-    height: 44px;
+    width: 48px;
+    height: 48px;
     background-color: #ffffff;
     border: 2px solid #b0b0b0;
     border-radius: 10px;
@@ -100,7 +104,7 @@ img {
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    min-height: 440px;
+    min-height: 480px;
 }
 
 .image-box {
@@ -176,8 +180,8 @@ img {
 /* Кнопка сброса (крестик) */
 .reset-btn {
     position: absolute;
-    bottom: -18px;
-    right: -18px;
+    bottom: 7px;
+    right: 15px;
     background: none;
     border: none;
     cursor: pointer;
@@ -194,18 +198,20 @@ img {
 
 .results-container {
     height: auto;
-    min-height: 450px;
+    min-height: 520px; /* Приведено к высоте основного контейнера тренажера */
 }
 
 .results-card {
-    flex-grow: 1;
+    width: 930px;         /* Фиксированная ширина точно как у question-card */
+      /* Запрещаем сжатие flex-элемента */
     background-color: #ffffff;
-    border-radius: 8px;
-    padding: 25px 20px;
+    border: 2px solid #2fa1b3; /* Добавлена обводка рамки в стиле question-card */
+    border-radius: 16px;  /* Приведено к скруглению question-card */
+    padding: 35px;        /* Приведены к отступам question-card */
     display: flex;
     flex-direction: column;
     justify-content: center;
-    min-height: 350px;
+    min-height: 480px;    /* Приведено к минимальной высоте question-card */
 }
 
 .table-scroll {
@@ -240,9 +246,7 @@ img {
 }
 
 .status-ok, .status-err {
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    text-align: center;
 }
 
 @media screen and (max-width: 600px) {

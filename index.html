@@ -23,38 +23,19 @@
 
             <div class="input-area">
                 <input type="text" id="user-input" placeholder="" autocomplete="off">
-               <button id="submit-btn" class="submit-btn" title="Отправить">
-    <svg width="36" height="36" viewBox="0 0 28 28" fill="none" style="overflow: visible;">
-        <!-- Черная подложка (цельная линия без разрывов и смещений) -->
-        <polyline points="4,13 11,21 24,7" stroke="#000000" stroke-width="9" stroke-linecap="square" stroke-linejoin="miter" stroke-miterlimit="3"></polyline>
-        <!-- Серая серединка -->
-        <polyline points="4,13 11,21 24,7" stroke="#cccccc" stroke-width="6" stroke-linecap="square" stroke-linejoin="miter" stroke-miterlimit="3"></polyline>
-    </svg>
-</button>
+                <!-- Иконка кнопки отправки динамически внедряется из script.js[cite: 51] -->
+                <button id="submit-btn" class="submit-btn" title="Отправить"></button>
             </div>
         </div>
 
-        <!-- Кнопка сброса (красный крестик с черным контуром в правом нижнем углу) -->
-        <button id="reset-btn" class="reset-btn" title="Сбросить">
-            <svg width="48" height="48" viewBox="0 0 24 24" fill="none">
-                <line x1="18" y1="6" x2="6" y2="18" stroke="#000000" stroke-width="5.5" stroke-linecap="square"></line>
-                <line x1="6" y1="6" x2="18" y2="18" stroke="#000000" stroke-width="5.5" stroke-linecap="square"></line>
-                <line x1="18" y1="6" x2="6" y2="18" stroke="#e53935" stroke-width="4" stroke-linecap="square"></line>
-                <line x1="6" y1="6" x2="18" y2="18" stroke="#e53935" stroke-width="4" stroke-linecap="square"></line>
-            </svg>
-        </button>
+        <!-- Кнопка сброса (иконка крестика подставляется из script.js) -->
+        <button id="reset-btn" class="reset-btn" title="Сбросить"></button>
     </main>
 
     <!-- ЭКРАН 2: Таблица результатов -->
     <main id="results-screen" class="trainer-container results-container" style="display: none;">
-        <button id="reset-results-btn" class="reset-btn" title="Перезапустить">
-            <svg width="48" height="48" viewBox="0 0 24 24" fill="none">
-                <line x1="18" y1="6" x2="6" y2="18" stroke="#000000" stroke-width="6.5" stroke-linecap="square"></line>
-                <line x1="6" y1="6" x2="18" y2="18" stroke="#000000" stroke-width="6.5" stroke-linecap="square"></line>
-                <line x1="18" y1="6" x2="6" y2="18" stroke="#e53935" stroke-width="4" stroke-linecap="square"></line>
-                <line x1="6" y1="6" x2="18" y2="18" stroke="#e53935" stroke-width="4" stroke-linecap="square"></line>
-            </svg>
-        </button>
+        <!-- Кнопка перезапуска (иконка крестика подставляется из script.js) -->
+        <button id="reset-results-btn" class="reset-btn" title="Перезапустить"></button>
 
         <div class="results-card">
             <div class="table-scroll">

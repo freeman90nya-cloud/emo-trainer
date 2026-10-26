@@ -3,12 +3,31 @@ let currentIndex = 0;
 let maxUnlockedIndex = 0;
 let userAnswers = [];
 
+// Единые константы для иконок галочки и крестика
+const CHECK_ICON_BUTTON = `<svg width="48" height="48" viewBox="0 0 28 28" fill="none" style="display: inline-block; vertical-align: middle; overflow: visible;">
+    <polyline points="4,13 11,21 24,7" stroke="#000000" stroke-width="7" stroke-linecap="square" stroke-linejoin="miter" stroke-miterlimit="3"></polyline>
+    <polyline id="submit-icon-path" points="4,13 11,21 24,7" stroke="#cccccc" stroke-width="5" stroke-linecap="square" stroke-linejoin="miter" stroke-miterlimit="3"></polyline>
+</svg>`;
+
+const CHECK_ICON_RESULT = `<svg width="48" height="48" viewBox="0 0 28 28" fill="none" style="display: inline-block; vertical-align: middle; overflow: visible;">
+    <polyline points="4,13 11,21 24,7" stroke="#000000" stroke-width="7" stroke-linecap="square" stroke-linejoin="miter" stroke-miterlimit="3"></polyline>
+    <polyline points="4,13 11,21 24,7" stroke="#2b8a3e" stroke-width="5" stroke-linecap="square" stroke-linejoin="miter" stroke-miterlimit="3"></polyline>
+</svg>`;
+
+const CROSS_ICON = `<svg width="48" height="48" viewBox="0 0 24 24" fill="none" style="display: inline-block; vertical-align: middle;">
+    <line x1="18" y1="6" x2="6" y2="18" stroke="#000000" stroke-width="5.5" stroke-linecap="square"></line>
+    <line x1="6" y1="6" x2="18" y2="18" stroke="#000000" stroke-width="5.5" stroke-linecap="square"></line>
+    <line x1="18" y1="6" x2="6" y2="18" stroke="#e53935" stroke-width="4" stroke-linecap="square"></line>
+    <line x1="6" y1="6" x2="18" y2="18" stroke="#e53935" stroke-width="4" stroke-linecap="square"></line>
+</svg>`;
+
 const trainerScreen = document.getElementById("trainer-screen");
 const resultsScreen = document.getElementById("results-screen");
 const questionImg = document.getElementById("question-img");
 const targetWordSpan = document.getElementById("target-word");
 const userInput = document.getElementById("user-input");
 const submitBtn = document.getElementById("submit-btn");
+let submitIconPath; // Инициализируем после вставки HTML
 const resetBtn = document.getElementById("reset-btn");
 const stepsIndicator = document.getElementById("steps-indicator");
 const resultsTbody = document.getElementById("results-tbody");
@@ -16,6 +35,12 @@ const resetResultsBtn = document.getElementById("reset-results-btn");
 
 async function initTrainer() {
     try {
+        // Динамически вставляем иконки в кнопку отправки и кнопки сброса из констант
+        submitBtn.innerHTML = CHECK_ICON_BUTTON;
+        submitIconPath = document.getElementById("submit-icon-path");
+        resetBtn.innerHTML = CROSS_ICON;
+        resetResultsBtn.innerHTML = CROSS_ICON;
+
         const response = await fetch('questions.json');
         questions = await response.json();
         shuffleArray(questions);
@@ -37,6 +62,17 @@ function shuffleArray(array) {
     }
 }
 
+// Функция управления цветом кнопки отправки в зависимости от введенного текста
+function updateSubmitButtonState() {
+    if (submitIconPath) {
+        if (userInput.value.trim().length > 0) {
+            submitIconPath.setAttribute("stroke", "#2b8a3e"); // Зеленый цвет при вводе[cite: 43]
+        } else {
+            submitIconPath.setAttribute("stroke", "#cccccc"); // Серый цвет, если поле пустое[cite: 43]
+        }
+    }
+}
+
 function loadQuestion() {
     const currentQ = questions[currentIndex];
     questionImg.src = currentQ.image;
@@ -50,6 +86,7 @@ function loadQuestion() {
         userInput.value = "";
     }
     
+    updateSubmitButtonState();
     userInput.focus();
     renderSteps();
 }
@@ -85,6 +122,7 @@ function renderSteps() {
 
 userInput.addEventListener('input', (e) => {
     e.target.value = e.target.value.replace(/[^а-яА-ЯёЁ\s-]/g, '');
+    updateSubmitButtonState();
 });
 
 function handleSubmission() {
@@ -156,9 +194,8 @@ function showResults() {
         const formattedCorrect = formatVowels(item.correctAnswer.toUpperCase());
         const formattedUser = formatVowels(item.userText.toUpperCase());
 
-        const statusIcon = item.isCorrect 
-            ? `<svg width="38" height="38" viewBox="0 0 24 24" fill="none" stroke="#2b8a3e" stroke-width="4.5"><polyline points="20 6 9 17 4 12"></polyline></svg>`
-            : `<svg width="38" height="38" viewBox="0 0 24 24" fill="none" stroke="#e53935" stroke-width="4.5"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>`;
+        // Теперь здесь просто используются наши готовые переменные иконок!
+        const statusIcon = item.isCorrect ? CHECK_ICON_RESULT : CROSS_ICON;
 
         tr.innerHTML = `
             <td>${index + 1}</td>
